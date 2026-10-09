@@ -167,15 +167,16 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
   </div>
   <label class="fld" for="fbmsg"><span id="fbmsglab">Why this source? (optional)</span> <textarea id="fbmsg" maxlength="1500" rows="5" dir="auto"></textarea></label>
   <label class="fld"><input type="checkbox" id="fbtech"> Add technical details (browser and screen size) to help fix a problem. You will see them in the email before it is sent.</label>
-  <div class="row"><button class="btn pri" id="fbsend">Open in my email app</button><button class="btn" id="fbcopy">Copy message</button></div>
+  <div class="row"><button class="btn pri" id="fbsend">Open in my email app</button><button class="btn" id="fbgmail">Open in Gmail</button><button class="btn" id="fbcopy">Copy message</button></div>
   <p class="meta" id="fbout" role="status" aria-live="polite"></p>
   <textarea id="fbtext" class="hide" readonly aria-label="Message to copy" rows="6"></textarea>
  </div>
- <p class="meta">No email app on this device? Press Copy message and send it from your webmail to journey@feetontheroad.com.au. Feedback is read by a person, so replies may take a few days.</p>
+ <p class="meta"><b>Open in my email app</b> uses your device’s default email program; on most Android phones that is Gmail. <b>Open in Gmail</b> (computers) opens a Gmail window in your browser, and you may need to sign in. No email app, or another webmail? Press Copy message and send it to journey@feetontheroad.com.au. Feedback is read by a person, so replies may take a few days.</p>
 </section>
 
 <section id="p-about" class="hide">
  <h2 class="sec">About</h2>
+ <p class="meta" id="ver">TopicsDigester · Version 1.0</p>
  <p>TopicsDigester collects news from sources you can see, groups stories about the same event, summarises them and lets you read or listen. Finite digest, no ads, nothing unsolicited, several sides, quiet by default, private by default, your language.</p>
  <p>Summaries and translations are machine-made and may contain mistakes. Every story links to its source. News belongs to its publishers.</p>
  <h2 class="sec">Sources</h2>
@@ -221,6 +222,7 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
 // ---- CONFIG ----------------------------------------------------------
 const API_BASE = 'https://api.feetontheroad.com.au';   // the news service
 const STORE = 'topicsdigester.v1';
+const APP_VERSION = '1.0';      // shown on the About page and in feedback emails
 // ---------------------------------------------------------------------
 const SCOPES=['My Digest','All','Local (WA/AU)','US','Europe','Asia','Middle East','Iran','Global','English','Persian'];
 const FIELDS=['All','Economy','Politics','Geopolitics','History','Tech','Social','Comedy','Full movies','Random'];
@@ -535,12 +537,19 @@ function fbBuild(){const k=$('fbkind').value,msg=$('fbmsg').value.trim(),nm=$('f
  if(k!=='source'&&!msg)return{err:'Please write a message first.'};
  const L=[];if(k==='source')L.push('Source name: '+(nm||'(not given)'),'Website or feed: '+(u||'(not given)'),'');
  if(msg)L.push(msg);
- if($('fbtech').checked)L.push('','--- Technical details ---','Browser: '+(navigator.userAgent||'unknown'),'Screen: '+(window.screen?screen.width+'x'+screen.height:'unknown'),'Page: '+location.origin+location.pathname,'Stories loaded: '+ALL.length+(live?'':' (sample stories only)'));
+ if($('fbtech').checked)L.push('','--- Technical details ---','Version: '+APP_VERSION,'Browser: '+(navigator.userAgent||'unknown'),'Screen: '+(window.screen?screen.width+'x'+screen.height:'unknown'),'Page: '+location.origin+location.pathname,'Stories loaded: '+ALL.length+(live?'':' (sample stories only)'));
  return{subject:'TopicsDigester: '+FB_KINDS[k],body:L.join('\n')}}
-function fbMailto(m){let b=m.body,url,cut=false;const mk=x=>'mailto:'+FB_TO+'?subject='+encodeURIComponent(m.subject)+'&body='+encodeURIComponent(x.replace(/\n/g,'\r\n'));
- url=mk(b);const note='\n[Message shortened to fit. Please paste the full text if needed.]';
+function fbLink(m,mk){let b=m.body,url=mk(b),cut=false;const note='\n[Message shortened to fit. Please paste the full text if needed.]';
  while(url.length>1800&&b.length>40){b=b.slice(0,Math.floor(b.length*0.8));url=mk(b+note);cut=true}return{url,cut}}
+const fbMailto=m=>fbLink(m,x=>'mailto:'+FB_TO+'?subject='+encodeURIComponent(m.subject)+'&body='+encodeURIComponent(x.replace(/\n/g,'\r\n')));
+const fbGmail=m=>fbLink(m,x=>'https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(FB_TO)+'&su='+encodeURIComponent(m.subject)+'&body='+encodeURIComponent(x));
 $('fbkind').onchange=fbKind;fbKind();
+const fbMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||'')||!!(window.matchMedia&&matchMedia('(pointer:coarse)').matches);
+$('fbgmail').classList.toggle('hide',fbMobile);                  // Gmail's web compose is for computers; phones use the default email app
+$('fbgmail').onclick=()=>{const m=fbBuild(),o=$('fbout');o.style.color='';
+ if(m.err){o.style.color='var(--ter)';o.textContent='⚠️ '+m.err;return}
+ const r=fbGmail(m),a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener noreferrer';a.click();
+ o.textContent='Opening Gmail in a new tab… sign in if asked. If nothing opened, allow pop-ups for this site, or press Copy message.'+(r.cut?' The message was shortened to fit; Copy message keeps the full text.':'')};
 $('fbsend').onclick=()=>{const m=fbBuild(),o=$('fbout');o.style.color='';
  if(m.err){o.style.color='var(--ter)';o.textContent='⚠️ '+m.err;return}
  const r=fbMailto(m);window.location.href=r.url;
@@ -568,6 +577,7 @@ $('stop').onclick=()=>speechSynthesis.cancel();
 function init(){$('group').checked=S.group;$('audio').checked=S.audio;$('lang').value=S.lang;renderChips();renderKw();renderVCount();render()}
 init();
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
+$('ver').textContent='TopicsDigester · Version '+APP_VERSION+' · October 2026';
 const h=(location.hash||'').slice(1);nav(PAGES.find(p=>p.toLowerCase()===h)||'Digest');
 refresh();
 </script>
