@@ -104,6 +104,7 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
  <h2 class="sec">YouTube videos <span class="badge">🔒 Stored on this device only</span></h2>
  <p class="meta">Videos you send with the Chrome add-on stay in this browser only. <span id="vcount"></span></p>
  <div class="row"><button class="btn" id="extdl">Download the Chrome add-on</button><button class="btn" id="vclr">Clear saved videos</button></div>
+ <p class="meta" id="extmsg" role="status" aria-live="polite"></p>
  <p class="meta">Setup steps are in Help.</p>
 
  <h2 class="sec">Audio</h2>
@@ -214,7 +215,7 @@ const DEMO=[
  {id:'d3',title:'Sample: Talks resume in the region',brief:'Sample story about diplomacy in the Middle East.',deep:'Sample deep text.',source:'Sample World C',region:'Middle East',field:'Geopolitics',type:'Breaking',keywords:['talks','diplomacy'],published:Date.now()-18e5,url:'https://feetontheroad.com.au',also:[]},
  {id:'d4',title:'Sample: Opinion – what cities owe cyclists',brief:'Sample opinion piece on urban transport.',deep:'Sample deep text.',source:'Sample Opinion D',region:'Europe',field:'Social',type:'Opinions',keywords:['cities','transport'],published:Date.now()-5e7,url:'https://feetontheroad.com.au',also:[]}
 ];
-const DEF={kw:[],lang:'en',group:true,audio:false,ev:{},sc:{},vids:[]};
+const DEF={kw:[],lang:'en',group:true,audio:false,ev:{},sc:{},vids:[],vlast:null};
 let S=load(), ALL=[], live=false, trans={}, showOrig=false, VALL=false;
 let F={scope:'All',field:'All',type:'Everything'};
 const $=id=>document.getElementById(id);
@@ -313,14 +314,14 @@ function vidOK(v){const s=F.scope,f=F.field,ty=F.type,t=v.t+' '+v.c;
  if(ty==='Popular'&&(v.views||0)<1e5)return false;
  if(VTYPE[ty]&&!VTYPE[ty].test(t))return false;
  return true}
-function renderVids(){const el=$('vp'),all=S.vids;
+function renderVids(){const el=$('vp'),all=S.vids,vl=S.vlast?`<p class="meta">✅ Last received from the add-on: ${vfmt(S.vlast)}</p>`:'';
  const l=all.filter(vidOK).map(v=>({v,via:S.kw.length?kwMatch(v.t+' '+v.c):null})).sort((a,b)=>(!!b.via)-(!!a.via));
  $('vpc').textContent=all.length?`(${l.length} of ${all.length} saved match)`:'';
  if(!all.length){el.innerHTML='<p class="meta">No videos yet. Install the Chrome add-on (see <a href="#help" id="vhelp">Help</a>), open youtube.com, scroll a little and press Send. Videos from your own YouTube home page or searches then appear here, filtered by the choices above.</p>';
   $('vhelp').onclick=e=>{e.preventDefault();nav('Help')};return}
- if(!l.length){el.innerHTML=`<p class="meta">No saved videos match <b>${esc([F.scope,F.field,F.type].filter(x=>!['All','Everything'].includes(x)).join(' · ')||'these filters')}</b>. Videos are matched on their title and channel. </p><button class="btn" id="vreset">Reset filters</button>`;$('vreset').onclick=resetF;return}
+ if(!l.length){el.innerHTML=vl+`<p class="meta">No saved videos match <b>${esc([F.scope,F.field,F.type].filter(x=>!['All','Everything'].includes(x)).join(' · ')||'these filters')}</b>. Videos are matched on their title and channel. </p><button class="btn" id="vreset">Reset filters</button>`;$('vreset').onclick=resetF;return}
  const shown=l.slice(0,VALL?30:8);
- el.innerHTML=shown.map(({v,via})=>`<div class="vrow"><a dir="auto" href="https://www.youtube.com/watch?v=${esc(v.id)}" target="_blank" rel="noopener noreferrer">${esc(v.t)}</a><span class="meta" dir="auto">${esc(v.c)}</span>${via?`<span class="vb" title="matches your keyword">★ ${esc(via)}</span>`:''}</div>`).join('')+
+ el.innerHTML=vl+shown.map(({v,via})=>`<div class="vrow"><a dir="auto" href="https://www.youtube.com/watch?v=${esc(v.id)}" target="_blank" rel="noopener noreferrer">${esc(v.t)}</a><span class="meta" dir="auto">${esc(v.c)}</span>${via?`<span class="vb" title="matches your keyword">★ ${esc(via)}</span>`:''}</div>`).join('')+
   (l.length>8?`<p><button class="btn" id="vall">${VALL?'Show fewer':'Show more ('+Math.min(l.length,30)+')'}</button></p>`:'');
  const b=$('vall');if(b)b.onclick=()=>{VALL=!VALL;renderVids()}}
 function importVids(list){const now=Date.now(),ok=list.slice(0,60).filter(v=>v&&/^[\w-]{11}$/.test(String(v.id)));
@@ -330,9 +331,10 @@ function importVids(list){const now=Date.now(),ok=list.slice(0,60).filter(v=>v&&
  S.vids=[...by.values()].filter(v=>v.t).sort((a,b)=>b.added-a.added).slice(0,300);save();return{found:ok.length,added}}
 window.addEventListener('message',e=>{const d=e.data;
  if(e.origin!==location.origin||e.source!==window||!d||d.type!=='td-videos'||!Array.isArray(d.videos))return;
- const r=importVids(d.videos);renderVids();renderVCount();status('ok',`Received ${r.found} videos from YouTube (${r.added} new). They stay on this device.`);
+ const r=importVids(d.videos);S.vlast={t:Date.now(),found:r.found,added:r.added};save();renderVids();renderVCount();status('ok',`Received ${r.found} videos from YouTube (${r.added} new). They stay on this device.`);
  if(!$('p-digest').classList.contains('hide'))$('vp').scrollIntoView({block:'nearest'})});
-function renderVCount(){$('vcount').textContent=S.vids.length?`${S.vids.length} saved.`:'None saved yet.'}
+const vfmt=l=>new Date(l.t).toLocaleString([],{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+' · '+l.found+' videos ('+l.added+' new)';
+function renderVCount(){$('vcount').textContent=(S.vids.length?`${S.vids.length} saved.`:'None saved yet.')+(S.vlast?' Last received from the add-on: '+vfmt(S.vlast)+'.':'')}
 $('vclr').onclick=()=>{if(confirm('Remove all saved YouTube videos from this browser?')){S.vids=[];save();renderVCount();renderVids()}};
 
 // ---- Chrome add-on: built here, so the download always matches this page and needs no separate file ----
@@ -438,7 +440,11 @@ function extFiles(){const dir=location.origin+location.pathname.replace(/[^/]*$/
   .map(([n,t])=>({name:'youtube-sender-web/'+n,data:enc.encode(t)}));
  if(icons)f.push({name:'youtube-sender-web/icon48.png',data:i48},{name:'youtube-sender-web/icon128.png',data:i128});
  return f}
-$('extdl').onclick=()=>{try{const a=document.createElement('a');a.href=URL.createObjectURL(makeZip(extFiles()));a.download='youtube-sender-web.zip';a.click();status('ok','Add-on downloaded as youtube-sender-web.zip. Unzip it, then follow the steps in Help.')}catch(e){status('err','Could not build the add-on file: '+e.message)}};
+$('extdl').onclick=()=>{const m=$('extmsg');
+ try{const z=makeZip(extFiles()),a=document.createElement('a');a.href=URL.createObjectURL(z);a.download='youtube-sender-web.zip';a.click();
+  m.style.color='';m.textContent='✅ Add-on file received: youtube-sender-web.zip ('+Math.max(1,Math.round(z.size/1024))+' KB). Check your Downloads folder, unzip it, then follow “Show videos from your own YouTube” in Help.';
+  status('ok','Add-on downloaded as youtube-sender-web.zip. Unzip it, then follow the steps in Help.')}
+ catch(e){m.style.color='var(--ter)';m.textContent='⚠️ Could not build the add-on file: '+e.message;status('err','Could not build the add-on file: '+e.message)}};
 
 // ---- data ----
 async function refresh(){status('work','Loading stories…');
