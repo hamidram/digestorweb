@@ -103,7 +103,7 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
 
  <h2 class="sec">YouTube videos <span class="badge">🔒 Stored on this device only</span></h2>
  <p class="meta">Videos you send with the Chrome add-on stay in this browser only. <span id="vcount"></span></p>
- <div class="row"><a class="btn" href="youtube-sender-web.zip" download>Download the Chrome add-on</a><button class="btn" id="vclr">Clear saved videos</button></div>
+ <div class="row"><button class="btn" id="extdl">Download the Chrome add-on</button><button class="btn" id="vclr">Clear saved videos</button></div>
  <p class="meta">Setup steps are in Help.</p>
 
  <h2 class="sec">Audio</h2>
@@ -123,7 +123,7 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
  <details><summary>2. Use the filters</summary><ul>
   <li><b>Scope:</b> My Digest (only stories matching your keywords), All, a region (Local (WA/AU), US, Europe, Asia, Global), the topic scopes <b>Middle East</b> and <b>Iran</b> (stories from any outlet), or a language: <b>English</b> or <b>Persian</b>.</li>
   <li><b>Field:</b> Economy, Politics, Geopolitics, History, Tech, Social, <b>Comedy</b>, <b>Full movies</b> or Random. Choose <b>Persian</b> + <b>Comedy</b> for Persian comedy, or <b>English</b> + <b>Full movies</b> for English full movies.</li>
-  <li><b>Type:</b> Everything, Top stories, Popular, Breaking, Opinions or Articles.</li>
+  <li><b>Type:</b> Everything, Top stories, Popular, Breaking, Opinions, <b>Research</b> or Articles. <b>Research</b> shows deeper reading: new research papers and abstracts, think-tank reports and scholarly explainers. Choose a Field as well, for example Research + Economy. Videos are not shown for Research.</li>
   <li>Comedy, Full movies and the language scopes are word rules on the title, summary and keywords, because stories carry no such tags. They are a good guide, not perfect.</li>
   <li><b>Surprise me</b> picks one random choice in every row. Press it again for another.</li>
   <li>Filters apply to both the stories and the <b>From your YouTube</b> panel.</li></ul></details>
@@ -197,7 +197,7 @@ const STORE = 'topicsdigester.v1';
 // ---------------------------------------------------------------------
 const SCOPES=['My Digest','All','Local (WA/AU)','US','Europe','Asia','Middle East','Iran','Global','English','Persian'];
 const FIELDS=['All','Economy','Politics','Geopolitics','History','Tech','Social','Comedy','Full movies','Random'];
-const TYPES=['Everything','Top stories','Popular','Breaking','Opinions','Articles'];
+const TYPES=['Everything','Top stories','Popular','Breaking','Opinions','Research','Articles'];
 const SYN=[['housing','property','real estate'],['market','trends','prices','outlook'],['ai','artificial intelligence'],['regulation','rules','law'],['economy','economic'],['prices','costs']];
 const rx=w=>new RegExp('(?<!\\w)(?:'+w+')(?!\\w)','i');
 const FIELD_WORDS={Economy:'economy economic inflation rate rates market prices housing property jobs trade budget bank',Politics:'election parliament government minister senate congress vote policy law bill',Geopolitics:'war ceasefire sanctions nato china russia ukraine israel iran treaty border military',History:'history historic ancient anniversary heritage century archaeology',Tech:'ai software chip tech startup cyber data robot model quantum app',Social:'health housing education community family culture climate wellbeing crime'};
@@ -309,7 +309,7 @@ function vidOK(v){const s=F.scope,f=F.field,ty=F.type,t=v.t+' '+v.c;
  if(s==='Persian'&&!PERSIAN_RX.test(t))return false;
  if(s==='English'&&PERSIAN_SCRIPT.test(t))return false;
  if(FIELD_RE[f]){if(!FIELD_RE[f].test(t))return false}else if(f!=='All'&&classify(t)!==f)return false;
- if(ty==='Articles')return false;
+ if(ty==='Articles'||ty==='Research')return false;
  if(ty==='Popular'&&(v.views||0)<1e5)return false;
  if(VTYPE[ty]&&!VTYPE[ty].test(t))return false;
  return true}
@@ -334,6 +334,111 @@ window.addEventListener('message',e=>{const d=e.data;
  if(!$('p-digest').classList.contains('hide'))$('vp').scrollIntoView({block:'nearest'})});
 function renderVCount(){$('vcount').textContent=S.vids.length?`${S.vids.length} saved.`:'None saved yet.'}
 $('vclr').onclick=()=>{if(confirm('Remove all saved YouTube videos from this browser?')){S.vids=[];save();renderVCount();renderVids()}};
+
+// ---- Chrome add-on: built here, so the download always matches this page and needs no separate file ----
+const EXT_HTML=String.raw`<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>TopicsDigester</title>
+<style>
+ body{width:300px;margin:0;padding:14px;background:#F4EDE1;color:#2B2927;font:14px/1.45 Georgia,serif}
+ h1{font-size:16px;margin:0 0 6px;color:#B5532F}
+ p{margin:0 0 10px;color:#7A6F63;font-size:13px}
+ button{width:100%;padding:9px;border:0;border-radius:20px;background:#C8782A;color:#fff;font:inherit;cursor:pointer}
+ button:hover{background:#B5532F}
+ button.alt{margin-top:10px;background:#EBDDC6;color:#2B2927}button.alt:hover{background:#e2d6c2}
+ #msg{margin-top:10px;font-size:13px}.bad{color:#B5532F;font-weight:bold}
+</style></head><body>
+ <h1>TopicsDigester</h1>
+ <p>Open youtube.com (home page or search results), scroll a little, then press Send. Your digest page opens and shows the videos. They stay in this browser.</p>
+ <button id="send">Send YouTube videos</button>
+ <div id="msg"></div>
+ <button id="open" class="alt">Open TopicsDigester</button>
+ @@SCRIPT@@
+</body></html>
+`;
+const EXT_JS=String.raw`// Change this if your digest page lives at a different address (also change host_permissions in manifest.json).
+const DIGEST_URL = '@@URL@@';
+const $ = id => document.getElementById(id);
+
+// Runs inside the YouTube page. Finds every video link on screen with its title, channel and views.
+function scrape() {
+  const idOf = h => { const m = /[?&]v=([\w-]{11})/.exec(h || ''); return m && m[1]; };
+  const txt = el => el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : '';
+  const best = new Map();
+  document.querySelectorAll('a[href*="/watch?v="]').forEach(a => {
+    const id = idOf(a.href);
+    if (!id) return;
+    const tile = a.closest('ytd-rich-item-renderer,ytd-video-renderer,ytd-grid-video-renderer,ytd-compact-video-renderer,ytd-playlist-video-renderer,yt-lockup-view-model') || a.parentElement;
+    const title = txt(tile && tile.querySelector('#video-title, .yt-lockup-metadata-view-model-wiz__title, h3')) || (a.getAttribute('title') || '').trim() || txt(a);
+    if (title.length < 3 || /^\d+:\d+(:\d+)?$/.test(title)) return;      // skip duration badges
+    const channel = txt(tile && tile.querySelector('ytd-channel-name a, #channel-name a, .yt-content-metadata-view-model-wiz__metadata-text'));
+    const vm = /([\d.,]+)\s*([KMB])?\s+views/i.exec(txt(tile));
+    const views = vm ? Math.round(parseFloat(vm[1].replace(/,/g, '')) * ({ K: 1e3, M: 1e6, B: 1e9 }[(vm[2] || '').toUpperCase()] || 1)) : 0;
+    const cur = best.get(id);
+    if (!cur) best.set(id, { id, title: title.slice(0, 200), channel: channel.slice(0, 100), views });
+    else { if (title.length > cur.title.length) { cur.title = title.slice(0, 200); cur.channel = channel.slice(0, 100); } cur.views = Math.max(cur.views, views); }
+  });
+  return [...best.values()].slice(0, 40);
+}
+
+// Runs inside the digest page: hands the videos to the page itself (nothing goes over the network).
+function deliver(videos) { window.postMessage({ type: 'td-videos', videos }, location.origin); }
+
+async function digestTab() {
+  let [t] = await chrome.tabs.query({ url: DIGEST_URL + '*' });
+  if (t) return t;
+  t = await chrome.tabs.create({ url: DIGEST_URL, active: false });
+  await new Promise(res => {
+    const f = (id, info) => { if (id === t.id && info.status === 'complete') { chrome.tabs.onUpdated.removeListener(f); res(); } };
+    chrome.tabs.onUpdated.addListener(f);
+    setTimeout(res, 15000);
+  });
+  return t;
+}
+
+$('send').onclick = async () => {
+  const say = (t, bad) => { $('msg').textContent = t; $('msg').className = bad ? 'bad' : ''; };
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab || !/^https:\/\/(www|m)\.youtube\.com\//.test(tab.url || '')) return say('Open youtube.com first (home page or search results), then press Send.', true);
+  say('Reading the page…');
+  let videos;
+  try { [{ result: videos }] = await chrome.scripting.executeScript({ target: { tabId: tab.id }, func: scrape }); }
+  catch (e) { return say('Could not read this page.', true); }
+  if (!videos || !videos.length) return say('No videos found. Scroll the page a little so videos load, then try again.', true);
+  say('Sending ' + videos.length + ' videos to your digest page…');
+  try {
+    const t = await digestTab();
+    await chrome.scripting.executeScript({ target: { tabId: t.id }, world: 'MAIN', func: deliver, args: [videos] });
+    await chrome.tabs.update(t.id, { active: true });
+    await chrome.windows.update(t.windowId, { focused: true });
+    say('Sent ' + videos.length + ' videos. Your digest page is open.');
+  } catch (e) {
+    say('Could not reach ' + DIGEST_URL + ' . Open it once in Chrome, then press Send again.', true);
+  }
+};
+$('open').onclick = () => chrome.tabs.create({ url: DIGEST_URL });
+`;
+function crc32(b){let c=-1;for(let i=0;i<b.length;i++){c^=b[i];for(let k=0;k<8;k++)c=(c>>>1)^(0xEDB88320&-(c&1))}return(~c)>>>0}
+function makeZip(files){const enc=new TextEncoder(),out=[],cen=[];let off=0;
+ const u16=n=>[n&255,n>>>8&255],u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
+ files.forEach(f=>{const nm=enc.encode(f.name),crc=crc32(f.data),sz=f.data.length,
+  lh=[0x50,0x4b,3,4,20,0,0,8,0,0,0,0,0x21,0,...u32(crc),...u32(sz),...u32(sz),...u16(nm.length),0,0];
+  out.push(new Uint8Array(lh),nm,f.data);
+  cen.push(new Uint8Array([0x50,0x4b,1,2,20,0,20,0,0,8,0,0,0,0,0x21,0,...u32(crc),...u32(sz),...u32(sz),...u16(nm.length),0,0,0,0,0,0,0,0,0,0,0,0,...u32(off)]),nm);
+  off+=lh.length+nm.length+sz});
+ const cd=cen.reduce((a,x)=>a+x.length,0),n=files.length;
+ return new Blob([...out,...cen,new Uint8Array([0x50,0x4b,5,6,0,0,0,0,...u16(n),...u16(n),...u32(cd),...u32(off),0,0])],{type:'application/zip'})}
+function extFiles(){const dir=location.origin+location.pathname.replace(/[^/]*$/,''),enc=new TextEncoder();
+ const png=u=>{const m=/^data:image\/png;base64,(.+)$/.exec(u||'');return m?Uint8Array.from(atob(m[1]),c=>c.charCodeAt(0)):null};
+ const i128=png((document.querySelector('.logo img')||{}).src),i48=png((document.querySelector('link[rel=icon]')||{}).href),icons=!!(i128&&i48);
+ const man={manifest_version:3,name:'TopicsDigester YouTube Sender',version:'2.1',
+  description:'Sends the videos on the YouTube page you are viewing (home page or search results) to your own TopicsDigester page in this browser. Nothing is sent to any server.',
+  permissions:['activeTab','scripting'],host_permissions:[location.origin+'/*'],action:{default_popup:'popup.html',default_title:'Send to TopicsDigester'}};
+ if(icons)man.icons={48:'icon48.png',128:'icon128.png'};
+ const f=[['manifest.json',JSON.stringify(man,null,2)],['popup.html',EXT_HTML.replace('@@SCRIPT@@','<scr'+'ipt src="popup.js"></scr'+'ipt>')],['popup.js',EXT_JS.replace('@@URL@@',dir)]]
+  .map(([n,t])=>({name:'youtube-sender-web/'+n,data:enc.encode(t)}));
+ if(icons)f.push({name:'youtube-sender-web/icon48.png',data:i48},{name:'youtube-sender-web/icon128.png',data:i128});
+ return f}
+$('extdl').onclick=()=>{try{const a=document.createElement('a');a.href=URL.createObjectURL(makeZip(extFiles()));a.download='youtube-sender-web.zip';a.click();status('ok','Add-on downloaded as youtube-sender-web.zip. Unzip it, then follow the steps in Help.')}catch(e){status('err','Could not build the add-on file: '+e.message)}};
 
 // ---- data ----
 async function refresh(){status('work','Loading stories…');
