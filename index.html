@@ -55,6 +55,8 @@ h2.sec{font-size:20px;margin:18px 0 6px}
 input[type=text],select,textarea{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:8px;min-height:40px}
 textarea{width:100%;min-height:80px;margin-top:6px}
 .badge{display:inline-block;font:600 13px/1.4 system-ui,sans-serif;background:var(--pan);border:1px solid var(--och);color:var(--tx);border-radius:999px;padding:2px 10px;margin-left:8px;vertical-align:middle}
+.fld{display:block;margin:12px 0 4px;font-family:system-ui,sans-serif;font-size:15px}
+.fld input[type=text],.fld select,.fld textarea{display:block;width:100%;margin-top:4px}
 details{margin:8px 0}
 details summary{cursor:pointer;color:var(--ter);font-weight:700}
 details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
@@ -149,15 +151,38 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
   <li><b>Nothing matches:</b> press Reset filters, or choose a wider Scope.</li>
   <li><b>Sent videos but the panel is empty:</b> check the Scope, Field and Type rows, then press Reset filters. The add-on message says how many videos were found; if it found none, scroll YouTube further and try again.</li>
   <li><b>The add-on says it cannot find the page:</b> open this site once in Chrome, then press Send again. Videos arrive in the Chrome profile you sent them from.</li>
+  <li><b>Feedback, or a source to suggest:</b> use the Feedback page.</li>
   <li><b>Lost my keywords:</b> browsers can clear site data. Export settings now and then.</li></ul></details>
+</section>
+
+<section id="p-feedback" class="hide">
+ <h2 class="sec">Feedback and source suggestions</h2>
+ <p>Tell us what works, what doesn’t, or which news or research sources you would like added. <b>Nothing is sent from this page.</b> The button opens a message in your own email app, addressed to <a href="mailto:journey@feetontheroad.com.au">journey@feetontheroad.com.au</a>, so you can read and change it before you send it.</p>
+ <div class="card">
+  <label class="fld" for="fbkind">What is it about?
+   <select id="fbkind"><option value="source">Suggest a news or research source</option><option value="feedback">General feedback</option><option value="problem">Something is wrong</option><option value="idea">Idea for a feature</option></select></label>
+  <div id="fbsrc">
+   <label class="fld" for="fbname">Source name <input type="text" id="fbname" maxlength="80" placeholder="e.g. Grattan Institute"></label>
+   <label class="fld" for="fburl">Website or feed address, if you know it <input type="text" id="fburl" maxlength="200" placeholder="e.g. https://grattan.edu.au"></label>
+  </div>
+  <label class="fld" for="fbmsg"><span id="fbmsglab">Why this source? (optional)</span> <textarea id="fbmsg" maxlength="1500" rows="5" dir="auto"></textarea></label>
+  <label class="fld"><input type="checkbox" id="fbtech"> Add technical details (browser and screen size) to help fix a problem. You will see them in the email before it is sent.</label>
+  <div class="row"><button class="btn pri" id="fbsend">Open in my email app</button><button class="btn" id="fbcopy">Copy message</button></div>
+  <p class="meta" id="fbout" role="status" aria-live="polite"></p>
+  <textarea id="fbtext" class="hide" readonly aria-label="Message to copy" rows="6"></textarea>
+ </div>
+ <p class="meta">No email app on this device? Press Copy message and send it from your webmail to journey@feetontheroad.com.au. Feedback is read by a person, so replies may take a few days.</p>
 </section>
 
 <section id="p-about" class="hide">
  <h2 class="sec">About</h2>
  <p>TopicsDigester collects news from sources you can see, groups stories about the same event, summarises them and lets you read or listen. Finite digest, no ads, nothing unsolicited, several sides, quiet by default, private by default, your language.</p>
  <p>Summaries and translations are machine-made and may contain mistakes. Every story links to its source. News belongs to its publishers.</p>
+ <h2 class="sec">Sources</h2>
+ <div class="card" id="srcs"><p class="meta">Open this page to load the list.</p></div>
+ <p class="meta">Know a good source? <a href="#feedback" id="sugglink">Suggest it</a>.</p>
  <h2 class="sec">Privacy</h2>
- <p class="meta">Last updated 8 October 2026 · <i>Draft: have it reviewed before launch.</i></p>
+ <p class="meta">Last updated 9 October 2026 · <i>Draft: have it reviewed before launch.</i></p>
  <p><b>The short version.</b> No accounts, no cookies, no ads, no tracking, no profiles. What you choose and read stays on your device. We only count totals.</p>
  <details open><summary>What stays on your device only</summary><ul>
   <li>Your keywords, star ratings, which stories you open, your language and audio choices, and any YouTube videos you send with the Chrome add-on.</li>
@@ -180,12 +205,13 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
   <li><b>The Chrome add-on</b> reads the titles, channels and links of videos on the YouTube page you choose to send, passes them only to this page in your browser, and stores nothing itself.</li></ul></details>
  <details><summary>Your choices and contact</summary><ul>
   <li>Everything personal is on your device, so you control it: export it, delete it, or simply stop using the site.</li>
-  <li>Questions or takedown requests: use the contact details at <a href="https://feetontheroad.com.au">feetontheroad.com.au</a>.</li>
+  <li>Questions, feedback, source suggestions or takedown requests: email <a href="mailto:journey@feetontheroad.com.au">journey@feetontheroad.com.au</a>, or use the Feedback page, which opens a message in your own email app. Nothing is sent from the page itself.</li>
+  <li>If you email us, we receive your email address and what you write. We use them only to reply and to improve the site, and we keep them only as long as needed.</li>
   <li>If we change what we collect, we will update this page and the date above before the change starts.</li></ul></details>
  <p class="meta"><a href="https://db-ip.com">IP Geolocation by DB-IP</a></p>
  <h2 class="sec">Licence</h2>
  <p>Free to use, copy, change and share with credit, provided as is. The feetontheroad name and logo are excluded. Third-party libraries keep their own licences.</p>
- <p>TopicsDigester is a project of <a href="https://feetontheroad.com.au">feetontheroad.com.au</a>. Visit our main site for more.</p>
+ <p>TopicsDigester is a project of <a href="https://feetontheroad.com.au">feetontheroad.com.au</a>. Visit our main site for more. Questions or ideas? Use the Feedback page or email <a href="mailto:journey@feetontheroad.com.au">journey@feetontheroad.com.au</a>.</p>
 </section>
 </main>
 </div>
@@ -227,10 +253,10 @@ function save(){try{localStorage.setItem(STORE,JSON.stringify(S))}catch(e){statu
 function status(k,t){const s=$('status');s.className=k;s.textContent=({work:'⏳ ',ok:'✅ ',err:''}[k]||'')+t.replace(/^[⏳✅]\s*/,'')}
 
 // ---- navigation ----
-const PAGES=['Digest','Learn','Settings','Help','About'];
+const PAGES=['Digest','Learn','Settings','Help','Feedback','About'];
 function nav(p){PAGES.forEach(x=>$('p-'+x.toLowerCase()).classList.toggle('hide',x!==p));
  [...$('nav').children].forEach(b=>b.textContent===p?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));
- if(p==='Learn')renderLearn();if(p==='Settings'){renderKw();renderVCount()}location.hash=p.toLowerCase()}
+ if(p==='Learn')renderLearn();if(p==='Settings'){renderKw();renderVCount()}if(p==='About')loadSources();location.hash=p.toLowerCase()}
 PAGES.forEach(p=>{const b=document.createElement('button');b.textContent=p;b.onclick=()=>nav(p);$('nav').appendChild(b)});
 
 // ---- chips ----
@@ -446,6 +472,14 @@ $('extdl').onclick=()=>{const m=$('extmsg');
   status('ok','Add-on downloaded as youtube-sender-web.zip. Unzip it, then follow the steps in Help.')}
  catch(e){m.style.color='var(--ter)';m.textContent='⚠️ Could not build the add-on file: '+e.message;status('err','Could not build the add-on file: '+e.message)}};
 
+// ---- sources list (read-only, from the news service) ----
+let SRC=null;
+async function loadSources(){const el=$('srcs');if(SRC)return;el.textContent='Loading sources…';
+ try{const r=await fetch(API_BASE+'/api/catalogue');if(!r.ok)throw new Error(r.status);SRC=await r.json();
+  el.innerHTML=`<p class="meta">${SRC.length} sources, checked about every 45 minutes. Each story links back to its source.</p>`+
+   SRC.map(s=>`<div class="vrow"><a href="${esc(safeUrl(s.home))}" target="_blank" rel="noopener noreferrer">${esc(s.name)}</a><span class="meta">${esc(s.region)} · ${esc(s.type)}${s.language==='fa'?' · Persian':''}</span></div>`).join('')}
+ catch(e){SRC=null;el.innerHTML='<p class="meta">The source list is not available right now (the news service is not reachable).</p>'}}
+
 // ---- data ----
 async function refresh(){status('work','Loading stories…');
  try{const r=await fetch(API_BASE+'/api/articles?limit=300&group=1',{headers:{Accept:'application/json'}});
@@ -491,6 +525,32 @@ $('kwtxtload').onclick=()=>{const n=addKw($('kwtxt').value.slice(0,20000));statu
 $('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));a.download='topicsdigester-settings.json';a.click()};
 $('imp').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const j=JSON.parse(r.result);if(typeof j!=='object'||!Array.isArray(j.kw))throw 0;S=Object.assign({},DEF,j,{vids:Array.isArray(j.vids)?j.vids:[]});save();init();status('ok','Settings imported')}catch(x){status('err','That file is not a TopicsDigester settings file.')}};r.readAsText(f)};
 $('wipe').onclick=()=>{if(confirm('Delete keywords, ratings, saved videos and settings from this browser?')){localStorage.removeItem(STORE);S=load();init();status('ok','All your data was deleted from this browser')}};
+
+// ---- feedback (opens the visitor's own email app: nothing is sent from this page) ----
+const FB_TO='journey@feetontheroad.com.au',FB_KINDS={source:'Suggest a source',feedback:'General feedback',problem:'Something is wrong',idea:'Idea for a feature'};
+function fbKind(){const src=$('fbkind').value==='source';$('fbsrc').classList.toggle('hide',!src);$('fbmsglab').textContent=src?'Why this source? (optional)':'Your message'}
+function fbBuild(){const k=$('fbkind').value,msg=$('fbmsg').value.trim(),nm=$('fbname').value.trim();let u=$('fburl').value.trim();
+ if(u&&!/^https?:\/\//i.test(u))u='https://'+u;
+ if(k==='source'&&!(nm||u))return{err:'Please give the source’s name or its web address.'};
+ if(k!=='source'&&!msg)return{err:'Please write a message first.'};
+ const L=[];if(k==='source')L.push('Source name: '+(nm||'(not given)'),'Website or feed: '+(u||'(not given)'),'');
+ if(msg)L.push(msg);
+ if($('fbtech').checked)L.push('','--- Technical details ---','Browser: '+(navigator.userAgent||'unknown'),'Screen: '+(window.screen?screen.width+'x'+screen.height:'unknown'),'Page: '+location.origin+location.pathname,'Stories loaded: '+ALL.length+(live?'':' (sample stories only)'));
+ return{subject:'TopicsDigester: '+FB_KINDS[k],body:L.join('\n')}}
+function fbMailto(m){let b=m.body,url,cut=false;const mk=x=>'mailto:'+FB_TO+'?subject='+encodeURIComponent(m.subject)+'&body='+encodeURIComponent(x.replace(/\n/g,'\r\n'));
+ url=mk(b);const note='\n[Message shortened to fit. Please paste the full text if needed.]';
+ while(url.length>1800&&b.length>40){b=b.slice(0,Math.floor(b.length*0.8));url=mk(b+note);cut=true}return{url,cut}}
+$('fbkind').onchange=fbKind;fbKind();
+$('fbsend').onclick=()=>{const m=fbBuild(),o=$('fbout');o.style.color='';
+ if(m.err){o.style.color='var(--ter)';o.textContent='⚠️ '+m.err;return}
+ const r=fbMailto(m);window.location.href=r.url;
+ o.textContent='Opening your email app… If nothing opens, press Copy message and send it from your webmail to '+FB_TO+'.'+(r.cut?' The message was shortened to fit; Copy message keeps the full text.':'')};
+$('fbcopy').onclick=async()=>{const m=fbBuild(),o=$('fbout'),t=$('fbtext');o.style.color='';
+ if(m.err){o.style.color='var(--ter)';o.textContent='⚠️ '+m.err;return}
+ const text='To: '+FB_TO+'\nSubject: '+m.subject+'\n\n'+m.body;
+ try{await navigator.clipboard.writeText(text);t.classList.add('hide');o.textContent='✅ Message copied. Paste it into an email to '+FB_TO+'.'}
+ catch(e){t.value=text;t.classList.remove('hide');t.focus();t.select();o.textContent='Copy did not work here. The message is in the box below: select it, copy it, and email it to '+FB_TO+'.'}};
+$('sugglink').onclick=e=>{e.preventDefault();$('fbkind').value='source';fbKind();nav('Feedback')};
 
 // ---- controls ----
 $('refresh').onclick=refresh;
