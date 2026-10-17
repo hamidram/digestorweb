@@ -1,5 +1,5 @@
 {
-  "version": "1.5",
+  "version": "1.6",
   "released": "Oct 2026",
-  "notes": "simpler top bar (home, listen, settings and a More menu), suggested keywords now in Settings, install button hides once installed."
+  "notes": "scope row always visible, headline text size, Surprise me never lands on an empty list, every headline now has its brief, round app icon."
 }

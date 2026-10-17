@@ -41,7 +41,7 @@ button{cursor:pointer}
 #status{margin-top:10px;padding:8px 10px;border-radius:6px;border:2px solid transparent;font-family:system-ui,sans-serif;font-size:15px}
 #status.work{border-color:var(--och)}#status.ok{border-color:#4a7c4a}#status.err{border-color:var(--ter);font-weight:700}
 h2.sec{font-size:20px;margin:18px 0 6px}
-.hl{display:flex;gap:12px;padding:18px 6px;border-bottom:1px solid var(--bd);cursor:pointer;font-family:system-ui,Segoe UI,Roboto,sans-serif;font-size:20px;line-height:1.55;font-weight:700}
+.hl{display:flex;gap:12px;padding:18px 6px;border-bottom:1px solid var(--bd);cursor:pointer;font-family:system-ui,Segoe UI,Roboto,sans-serif;font-size:var(--hlfs,20px);line-height:1.55;font-weight:700}
 .hl:hover,.hl:focus-within{background:var(--pan)}
 .hl .n{color:var(--och);min-width:1.6em}
 .hl .src{display:block;font-size:14px;font-weight:400;color:var(--mu)}
@@ -103,6 +103,18 @@ textarea{width:100%;min-height:80px;margin-top:6px}
 .menu button{display:block;width:100%;text-align:left;background:none;border:0;padding:10px 12px;min-height:44px;font:inherit;color:var(--tx);border-radius:8px;cursor:pointer}
 .menu button:hover,.menu button[aria-current=page]{background:var(--pan)}
 .sub3{font:700 16px Georgia,serif;margin:14px 0 4px;color:var(--ter)}
+body{--hlfs:20px}
+body[data-hs=s]{--hlfs:16px}
+body[data-hs=l]{--hlfs:25px}
+@media(max-width:600px){body{--hlfs:17px}body[data-hs=s]{--hlfs:14.5px}body[data-hs=l]{--hlfs:21px}}
+.hlhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hsz{display:inline-flex;gap:4px;flex:none}
+.hsz .btn{min-width:40px;padding:3px 8px;justify-content:center}
+.btn:disabled{opacity:.4;cursor:default}
+.scoperow{position:relative;display:flex;gap:5px;overflow-x:auto;white-space:nowrap;padding:4px 0 6px;margin-top:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.scoperow::-webkit-scrollbar{display:none}
+.scoperow .chip{flex:none}
+@media(min-width:700px){.scoperow{flex-wrap:wrap;white-space:normal;overflow:visible}}
 details{margin:8px 0}
 details summary{cursor:pointer;color:var(--ter);font-weight:700}
 details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
@@ -118,7 +130,7 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
  .panel{padding:8px 10px;margin-bottom:10px}
  #status{margin-top:6px;padding:4px 8px;font-size:13px}
  h2.sec{font-size:18px;margin:12px 0 4px}
- .hl{padding:12px 4px;font-size:17px;gap:8px}
+ .hl{padding:12px 4px;gap:8px}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
@@ -150,11 +162,12 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
 <section id="p-digest">
  <div class="panel" id="fpanel">
   <div class="fbar">
-   <button class="btn sm" id="ftoggle" aria-expanded="false" aria-controls="fbody">Filters ▾</button>
+   <button class="btn sm" id="ftoggle" aria-expanded="false" aria-controls="fbody">More filters ▾</button>
    <button class="btn sm pri" id="refresh">Refresh</button>
    <button class="btn sm" id="surprise">Surprise me</button>
    <span class="fsum" id="fsum"></span>
   </div>
+  <div class="scoperow" id="scoperow" role="group" aria-label="Scope"></div>
   <div id="fbody" class="hide">
    <div id="chips"></div>
    <div class="actions">
@@ -175,7 +188,7 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
   </div>
   <div id="status" role="status" aria-live="polite"></div>
  </div>
- <h2 class="sec" id="hlHead">Headlines</h2><div id="headlines"></div>
+ <div class="hlhead"><h2 class="sec" id="hlHead">Headlines</h2><span class="hsz"><button type="button" class="btn sm" id="hsm" aria-label="Smaller headline text" title="Smaller headline text">A−</button><button type="button" class="btn sm" id="hlg" aria-label="Larger headline text" title="Larger headline text">A+</button></span></div><div id="headlines"></div>
  <h2 class="sec">From your YouTube <span class="meta" id="vpc"></span></h2><div class="card" id="vp"></div>
  <h2 class="sec">Briefs</h2><div id="briefs"></div>
 </section>
@@ -197,10 +210,14 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
  <p class="meta">Videos you send with the Chrome add-on stay in this browser only. <span id="vcount"></span></p>
  <div class="row"><button class="btn" id="extdl">Download the Chrome add-on</button><button class="btn" id="vclr">Clear saved videos</button></div>
  <p class="meta" id="extmsg" role="status" aria-live="polite"></p>
- <div class="row"><button class="btn" id="vexp">Export videos to a file</button><label class="btn">Import videos from a file<input type="file" id="vimp" accept=".json,.csv,.txt,text/csv,application/json" class="hide"></label></div>
+ <div class="row"><button class="btn" id="vexp">Export video links to a file</button><label class="btn">Import video links from a file<input type="file" id="vimp" accept=".json,.csv,.txt,text/csv,application/json" class="hide"></label></div>
  <p class="meta" id="vimsg" role="status" aria-live="polite"></p>
- <p class="meta">To move videos between devices: send them with the add-on on a computer, export, then import on your phone. Accepted files: one saved by <b>Export videos</b> or <b>Export settings</b>, a Google Takeout <code>watch-history.json</code>, or a CSV with the columns link (or id), title, channel, views (a header row is optional).</p>
+ <p class="meta">To move your video links between devices: send them with the add-on on a computer, export, then import on your phone. Accepted files: one saved by <b>Export video links</b> or <b>Export settings</b>, a Google Takeout <code>watch-history.json</code>, or a CSV with the columns link (or id), title, channel, views (a header row is optional).</p>
  <p class="meta">Setup steps are in Help.</p>
+
+ <h2 class="sec">Display</h2>
+ <label>Headline text size <select id="hsel"><option value="s">Small</option><option value="m">Medium</option><option value="l">Large</option></select></label>
+ <p class="meta">The same A− and A+ buttons sit beside the Headlines heading. Handy on a phone.</p>
 
  <h2 class="sec">Audio</h2>
  <label><input type="checkbox" id="li"> Show the 🔊 Listen icon at the top of the page</label>
@@ -340,7 +357,7 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
 // ---- CONFIG ----------------------------------------------------------
 const API_BASE = 'https://api.feetontheroad.com.au';   // the news service
 const STORE = 'topicsdigester.v1';
-const APP_VERSION = '1.5';
+const APP_VERSION = '1.6';
 const APP_DATE = 'Oct 2026';      // shown on the About page and in feedback emails
 // ---------------------------------------------------------------------
 const SCOPES=['My Digest','All','Local (WA/AU)','US','Europe','Asia','Middle East','Iran','Global','English','Persian'];
@@ -362,7 +379,7 @@ const DEMO=[
  {id:'d3',title:'Sample: Talks resume in the region',brief:'Sample story about diplomacy in the Middle East.',deep:'Sample deep text.',source:'Sample World C',region:'Middle East',field:'Geopolitics',type:'Breaking',keywords:['talks','diplomacy'],published:Date.now()-18e5,url:'https://feetontheroad.com.au',also:[]},
  {id:'d4',title:'Sample: Opinion – what cities owe cyclists',brief:'Sample opinion piece on urban transport.',deep:'Sample deep text.',source:'Sample Opinion D',region:'Europe',field:'Social',type:'Opinions',keywords:['cities','transport'],published:Date.now()-5e7,url:'https://feetontheroad.com.au',also:[]}
 ];
-const DEF={kw:[],lang:'en',group:true,audio:false,li:true,ev:{},sc:{},vids:[],vlast:null,aud:{n:5,mode:'h',voice:''}};
+const DEF={kw:[],lang:'en',group:true,audio:false,li:true,hs:'m',ev:{},sc:{},vids:[],vlast:null,aud:{n:5,mode:'h',voice:''}};
 let S=load(), ALL=[], live=false, trans={}, showOrig=false, VALL=false;
 let F={scope:'All',field:'All',type:'Everything'};
 const $=id=>document.getElementById(id);
@@ -391,13 +408,19 @@ document.addEventListener('keydown',e=>{const open=!$('menu').classList.contains
  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();const it=[...$('menu').querySelectorAll('button:not(.hide)')],i=it.indexOf(document.activeElement);it[(i+(e.key==='ArrowDown'?1:-1)+it.length)%it.length].focus()}});
 
 // ---- chips ----
-function renderChips(){const h=$('chips');h.innerHTML='';
- [['Scope',SCOPES,'scope'],['Field',FIELDS,'field'],['Type',TYPES,'type']].forEach(([lab,opts,key])=>{
-  const l=document.createElement('div');l.className='rowlab';l.textContent=lab;h.appendChild(l);
-  const r=document.createElement('div');r.className='row';r.setAttribute('role','group');r.setAttribute('aria-label',lab);
-  opts.forEach(o=>{const b=document.createElement('button');b.className='chip';b.textContent=o;b.setAttribute('aria-pressed',F[key]===o);b.onclick=()=>{F[key]=o;renderChips();render()};r.appendChild(b)});h.appendChild(r)})}
-$('surprise').onclick=()=>{const pick=a=>a[Math.floor(Math.random()*a.length)];
- F={scope:pick(SCOPES.filter(x=>x!=='All'&&x!=='My Digest')),field:pick(FIELDS.filter(x=>x!=='All')),type:pick(TYPES.filter(x=>x!=='Everything'))};renderChips();render()};
+function renderChips(){const h=$('chips');h.innerHTML='';const sr=$('scoperow');sr.innerHTML='';
+ const build=(opts,key,r)=>opts.forEach(o=>{const b=document.createElement('button');b.className='chip';b.textContent=o;b.setAttribute('aria-pressed',F[key]===o);b.onclick=()=>{F[key]=o;renderChips();render()};r.appendChild(b)});
+ build(SCOPES,'scope',sr);const sel=sr.querySelector('[aria-pressed=true]');if(sel)sr.scrollLeft=Math.max(0,sel.offsetLeft-sr.clientWidth/2+sel.offsetWidth/2);
+ [['Field',FIELDS,'field'],['Type',TYPES,'type']].forEach(([lab,opts,key])=>{const l=document.createElement('div');l.className='rowlab';l.textContent=lab;h.appendChild(l);
+  const r=document.createElement('div');r.className='row';r.setAttribute('role','group');r.setAttribute('aria-label',lab);build(opts,key,r);h.appendChild(r)})}
+// Surprise me: tries combinations in random order and stops at the first one that has stories, so it never lands on an empty list
+$('surprise').onclick=()=>{const cur=F,sc=SCOPES.filter(x=>x!=='All'&&x!=='My Digest'),fl=FIELDS.filter(x=>x!=='All'),ty=TYPES.filter(x=>x!=='Everything'),all=[];
+ sc.forEach(a=>fl.forEach(b=>ty.forEach(c=>all.push({scope:a,field:b,type:c}))));
+ for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]]}
+ let pick=null,n=0;for(const c of all){F=c;n=filtered().length;if(n>0&&!(c.scope===cur.scope&&c.field===cur.field&&c.type===cur.type)){pick=c;break}}
+ if(pick)status('ok','Surprise: '+pick.scope+' · '+pick.field+' · '+pick.type+' ('+n+' stories)');
+ else{F={scope:'All',field:'All',type:'Everything'};status('err','Nothing to surprise you with yet: showing everything.')}
+ renderChips();render()};
 
 // ---- keyword matching (Persian-aware) ----
 const PMAP={'ي':'ی','ك':'ک','ۀ':'ه','ة':'ه','\u200c':' ','\u0640':''};
@@ -441,7 +464,7 @@ function render(){const l=filtered(),hs=roundRobin(l,20);
   const ht=d.querySelector('.ht');ht.onkeydown=e=>{if(e.key==='Enter')go()};
   d.querySelector('.rt').onclick=e=>{const b=e.target.closest('button');if(!b)return;e.stopPropagation();rate(a.id,+b.dataset.v,d)};H.appendChild(d)});
  const tr=document.createElement('div');tr.className='toprow';tr.innerHTML='<button type="button" class="topbtn" aria-label="Back to top" title="Back to top">'+UPSVG+'</button>';tr.firstChild.onclick=toTop;H.appendChild(tr);
- l.slice(0,60).forEach(a=>B.appendChild(card(a)))}
+ const hid=new Set(hs.map(a=>a.id));[...hs,...l.filter(a=>!hid.has(a.id))].slice(0,60).forEach(a=>B.appendChild(card(a)))}   // briefs follow the headline order, so every headline has one
  updFsum();renderVids()}
 function resetF(){F={scope:'All',field:'All',type:'Everything'};renderChips();render()}
 
@@ -513,15 +536,16 @@ function parseVideoFile(text){const list=[];let skipped=0;
   let iL=0,iT=1,iC=2,iV=3;if(hasH){const a=ix(/^(url|link|id|video id|video url|titleurl)$/),b=ix(/title|name/),c=ix(/channel|author|uploader/),d=ix(/view/);if(a>=0)iL=a;if(b>=0)iT=b;iC=c>=0?c:-1;iV=d>=0?d:-1}
   rows.slice(hasH?1:0).forEach(r=>add(idOf(r[iL]),r[iT],iC>=0?r[iC]:'',iV>=0?parseInt(String(r[iV]).replace(/[,\s]/g,''))||0:0))}
  return{list,skipped}}
-$('vexp').onclick=()=>{const m=$('vimsg');m.style.color='';if(!S.vids.length){m.textContent='No saved videos to export yet.';return}
+const vl=n=>n+' video link'+(n===1?'':'s');
+$('vexp').onclick=()=>{const m=$('vimsg');m.style.color='';if(!S.vids.length){m.textContent='No saved video links to export yet.';return}
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S.vids.map(v=>({id:v.id,title:v.t,channel:v.c,views:v.views})),null,1)],{type:'application/json'}));a.download='topicsdigester-videos.json';a.click();
- m.textContent='✅ Saved '+S.vids.length+' videos to topicsdigester-videos.json.'};
+ m.textContent='✅ Saved '+vl(S.vids.length)+' to topicsdigester-videos.json.'};
 $('vimp').onchange=e=>{const f=e.target.files[0],m=$('vimsg');if(!f)return;m.style.color='';
  if(f.size>25*1048576){m.style.color='var(--ter)';m.textContent='⚠️ That file is too large (over 25 MB). Use a smaller export.';e.target.value='';return}
  const r=new FileReader();r.onload=()=>{const p=parseVideoFile(String(r.result));
   if(p.err){m.style.color='var(--ter)';m.textContent='⚠️ '+p.err}
   else if(!p.list.length){m.style.color='var(--ter)';m.textContent='⚠️ No videos with a usable link and title were found'+(p.skipped?' ('+p.skipped+' skipped)':'')+'.'}
-  else{const o=importVids(p.list,300);renderVids();renderVCount();m.textContent='✅ Imported '+o.found+' videos ('+o.added+' new)'+(p.skipped?'; '+p.skipped+' skipped for having no usable link or title':'')+'. They stay on this device.'+(p.list.length>300?' Only the first 300 are kept.':'')}
+  else{const o=importVids(p.list,300);renderVids();renderVCount();m.textContent='✅ Imported '+vl(o.found)+' ('+o.added+' new)'+(p.skipped?'; '+p.skipped+' skipped for having no usable link or title':'')+'. They stay on this device.'+(p.list.length>300?' Only the first 300 are kept.':'')}
   e.target.value=''};r.readAsText(f)};
 window.addEventListener('message',e=>{const d=e.data;
  if(e.origin!==location.origin||e.source!==window||!d||d.type!=='td-videos'||!Array.isArray(d.videos))return;
@@ -788,16 +812,21 @@ const dueCheck=()=>{const st=updState();return !st.last||Date.now()-st.last>6*36
 setTimeout(()=>{if(dueCheck())checkUpdate(false)},4000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&dueCheck())checkUpdate(false)});
 
+// ---- headline text size ----
+const HS=['s','m','l'];
+function applyHs(){document.body.dataset.hs=S.hs;$('hsel').value=S.hs;$('hsm').disabled=S.hs==='s';$('hlg').disabled=S.hs==='l'}
+function setHs(v){if(!HS.includes(v))return;S.hs=v;save();applyHs()}
+$('hsm').onclick=()=>setHs(HS[Math.max(0,HS.indexOf(S.hs)-1)]);$('hlg').onclick=()=>setHs(HS[Math.min(2,HS.indexOf(S.hs)+1)]);$('hsel').onchange=e=>setHs(e.target.value);
+
 // ---- controls ----
 $('refresh').onclick=refresh;
 $('group').onchange=e=>{S.group=e.target.checked;save();render()};
 $('lang').onchange=e=>{S.lang=e.target.value;save();render();fillVoices();if(S.lang!=='en')translate()};
 
 // ---- compact filter bar ----
-function setFOpen(v){$('fbody').classList.toggle('hide',!v);$('ftoggle').textContent=v?'Filters ▴':'Filters ▾';$('ftoggle').setAttribute('aria-expanded',v)}
+function setFOpen(v){$('fbody').classList.toggle('hide',!v);$('ftoggle').textContent=v?'More filters ▴':'More filters ▾';$('ftoggle').setAttribute('aria-expanded',v)}
 $('ftoggle').onclick=()=>setFOpen($('fbody').classList.contains('hide'));
-function updFsum(){const p=[['Scope',F.scope,'All'],['Field',F.field,'All'],['Type',F.type,'Everything']].filter(x=>x[1]!==x[2]).map(x=>x[0]+' '+x[1]);
- $('fsum').textContent=p.length?p.join(' · '):'No filters: showing everything'}
+function updFsum(){const p=[['Field',F.field,'All'],['Type',F.type,'Everything']].filter(x=>x[1]!==x[2]).map(x=>x[0]+' '+x[1]),e=$('fsum');e.textContent=p.join(' · ');e.classList.toggle('hide',!p.length)}
 
 // ---- listen: reads the top headlines aloud with the device's own voice (no AI needed) ----
 const TTS='speechSynthesis' in window,VLANG={en:['en'],fa:['fa'],ceb:['ceb','fil','tl']},LCODE={en:'en-AU',fa:'fa-IR',ceb:'fil-PH'},LNAME={en:'English',fa:'Persian',ceb:'Visayan/Cebuano'};
@@ -843,7 +872,7 @@ $('aclose').onclick=()=>{stopListen('');$('lbar').classList.add('hide')};
 $('acount').onchange=e=>{S.aud.n=+e.target.value;save()};$('amode').onchange=e=>{S.aud.mode=e.target.value;save()};$('avoice').onchange=e=>{S.aud.voice=e.target.value;save()};
 window.addEventListener('pagehide',()=>{if(TTS)speechSynthesis.cancel()});
 
-function init(){$('group').checked=S.group;$('lang').value=S.lang;$('li').checked=S.li;$('acount').value=String(S.aud.n);$('amode').value=S.aud.mode;$('hdrver').textContent='v'+APP_VERSION+' · '+APP_DATE;renderChips();renderKw();renderVCount();render();fillVoices();updListen();setFOpen(window.innerWidth>=700)}
+function init(){applyHs();$('group').checked=S.group;$('lang').value=S.lang;$('li').checked=S.li;$('acount').value=String(S.aud.n);$('amode').value=S.aud.mode;$('hdrver').textContent='v'+APP_VERSION+' · '+APP_DATE;renderChips();renderKw();renderVCount();render();fillVoices();updListen();setFOpen(window.innerWidth>=700)}
 init();
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
 $('ver').textContent='TopicsDigester · Version '+APP_VERSION+' · October 2026';
