@@ -1,5 +1,5 @@
 {
-  "version": "1.6",
+  "version": "1.7",
   "released": "Oct 2026",
-  "notes": "scope row always visible, headline text size, Surprise me never lands on an empty list, every headline now has its brief, round app icon."
+  "notes": "new Focus and Format filters with counts, deep articles and research from OpenAlex topics, area row always visible."
 }

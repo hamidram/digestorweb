@@ -115,6 +115,8 @@ body[data-hs=l]{--hlfs:25px}
 .scoperow::-webkit-scrollbar{display:none}
 .scoperow .chip{flex:none}
 @media(min-width:700px){.scoperow{flex-wrap:wrap;white-space:normal;overflow:visible}}
+.rowtag{flex:none;align-self:center;font:600 13px system-ui,sans-serif;color:var(--mu);padding-right:2px}
+.chip.zero{opacity:.5}
 details{margin:8px 0}
 details summary{cursor:pointer;color:var(--ter);font-weight:700}
 details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
@@ -167,7 +169,8 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
    <button class="btn sm" id="surprise">Surprise me</button>
    <span class="fsum" id="fsum"></span>
   </div>
-  <div class="scoperow" id="scoperow" role="group" aria-label="Scope"></div>
+  <div class="scoperow" id="focusrow" role="group" aria-label="Focus"></div>
+  <div class="scoperow" id="scoperow" role="group" aria-label="Area"></div>
   <div id="fbody" class="hide">
    <div id="chips"></div>
    <div class="actions">
@@ -238,12 +241,14 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
   <li><b>The top bar:</b> 🏠 Home (the digest), 🔊 Listen (when your device can read aloud), ⚙ Settings (keywords, suggested keywords, YouTube, your data) and ☰ More (Help, Feedback, About, Install app). On a phone the buttons show icons only; touch and hold or look at the page title beside Home to see where you are.</li>
   <li>On a phone the filters are folded away to save space: press <b>Filters ▾</b> to open them. The line beside the buttons shows which filters are on.</li></ol></details>
  <details><summary>2. Use the filters</summary><ul>
-  <li><b>Scope:</b> My Digest (only stories matching your keywords), All, a region (Local (WA/AU), US, Europe, Asia, Global), the topic scopes <b>Middle East</b> and <b>Iran</b> (stories from any outlet), or a language: <b>English</b> or <b>Persian</b>.</li>
-  <li><b>Field:</b> Economy, Politics, Geopolitics, History, Tech, Social, <b>Comedy</b>, <b>Full movies</b> or Random. Choose <b>Persian</b> + <b>Comedy</b> for Persian comedy, or <b>English</b> + <b>Full movies</b> for English full movies.</li>
-  <li><b>Type:</b> Everything, Top stories, Popular, Breaking, Opinions, <b>Research</b> or Articles. <b>Research</b> shows deeper reading: new research papers and abstracts, think-tank reports and scholarly explainers. Choose a Field as well, for example Research + Economy. Videos are not shown for Research.</li>
-  <li>Comedy, Full movies and the language scopes are word rules on the title, summary and keywords, because stories carry no such tags. They are a good guide, not perfect.</li>
-  <li><b>Surprise me</b> picks one random choice in every row. Press it again for another.</li>
-  <li>Filters apply to both the stories and the <b>From your YouTube</b> panel.</li></ul></details>
+  <li><b>Focus</b> (the first row, swipe sideways; pick one or more): News &amp; politics, Sport, Entertainment, Fun &amp; comedy, Money, Family &amp; kids, Health &amp; wellbeing, Science &amp; tech, Society &amp; culture. Pick two or more to see stories from either. <b>All</b> clears it.</li>
+  <li><b>Area</b> (second row): My Digest (only stories matching your keywords), All, a region (Local (WA/AU), US, Europe, Asia, Global), the topic areas Middle East and Iran (any outlet), or a language: English or Persian.</li>
+  <li><b>Format</b> (under <b>More filters</b>): Quick reads (news items), Deep reads (long stories, analysis, opinion), Ideas &amp; solutions, or Research (papers and reports).</li>
+  <li>The number beside each Focus and Format choice is how many stories you would see. A faded choice has none right now.</li>
+  <li>Stories are tagged by their source and by words in the title and summary, so the tags are a good guide, not perfect.</li>
+  <li><b>Deep articles on a subject:</b> the Research format includes recent papers on topics such as social systems, parenting, mental health, inequality and housing, found through OpenAlex, an open index of scholarly work. Choose a Focus together with Research.</li>
+  <li><b>Surprise me</b> picks a random Area, Focus and Format that has stories. Press it again for another.</li>
+  <li>Videos from your YouTube follow Area and Focus, and are hidden when a Format is chosen.</li></ul></details>
  <details><summary>3. Add your own keywords (any language)</summary><ol>
   <li>Go to <b>Settings → Keywords</b>, type a word or phrase, such as <code>Australian housing market</code> or <code dir="rtl">سریال ایرانی</code>, then press Add or Enter. Separate several with commas or new lines.</li>
   <li>Every word of a phrase must appear in the story or video title, so <code>jimmy kimmel</code> matches more than <code>jimmy kimmel show</code>.</li>
@@ -256,7 +261,7 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
   <li>The <b>From your YouTube</b> panel under Headlines shows videos YouTube already recommends to you. They never leave this browser.</li>
   <li><b>Set up once (Chrome on a computer):</b> in Settings press <b>Download the Chrome add-on</b> and unzip it. Open <code>chrome://extensions</code>, switch on <b>Developer mode</b>, press <b>Load unpacked</b> and choose the unzipped folder. Pin it with the puzzle-piece icon if you like.</li>
   <li><b>Each time:</b> open youtube.com (home page or search results), scroll a little so videos load, click the add-on icon and press <b>Send</b>. This page opens and the panel fills.</li>
-  <li><b>Filters apply to videos too.</b> Videos have no tags, so each choice is a word rule on the title and channel name: regions and topic scopes by place words, languages by script, Field by topic words, Popular means 100,000 views or more, Breaking and Opinions by words such as “breaking” or “analysis”. Matches for your keywords are marked ★ and listed first.</li>
+  <li><b>Area and Focus apply to videos too.</b> Videos have no tags, so each choice is a word rule on the title and channel name: regions and topic areas by place words, languages by script, Focus by topic words (for example “comedian” for Fun &amp; comedy). Choosing a Format hides videos. Matches for your keywords are marked ★ and listed first.</li>
   <li>Up to 300 videos are kept. Use <b>Clear saved videos</b> in Settings to start over.</li></ol></details>
  <details><summary>5. Language and audio</summary><ul>
   <li><b>Text language</b> (Filters panel): English, Persian or Visayan. Stories in another language are translated for you (machine translation, so check the source). Persian shows right to left.</li>
@@ -271,7 +276,7 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
  <details><summary>7. Something not working?</summary><ul>
   <li><b>Sample stories only:</b> the news service is not reachable. Press Refresh later.</li>
   <li><b>Nothing matches:</b> press Reset filters, or choose a wider Scope.</li>
-  <li><b>Sent videos but the panel is empty:</b> check the Scope, Field and Type rows, then press Reset filters. The add-on message says how many videos were found; if it found none, scroll YouTube further and try again.</li>
+  <li><b>Sent videos but the panel is empty:</b> check the Focus and Area rows (and Format, under More filters), then press Reset filters. Choosing a Format hides videos. The add-on message says how many videos were found; if it found none, scroll YouTube further and try again.</li>
   <li><b>The add-on says it cannot find the page:</b> open this site once in Chrome, then press Send again. Videos arrive in the Chrome profile you sent them from.</li>
   <li><b>Old version still showing after an update:</b> close the app or tab completely and open it again while online; on a computer press Ctrl+F5.</li>
   <li><b>Feedback, or a source to suggest:</b> use the Feedback page.</li>
@@ -309,7 +314,7 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
  <p class="meta" id="ver">TopicsDigester · Version 1.0</p>
  <div class="row"><button class="btn sm" id="updchk">Check for updates</button><span class="meta" id="updmsg" role="status" aria-live="polite"></span></div>
  <p>TopicsDigester collects news from sources you can see, groups stories about the same event, summarises them and lets you read or listen. Finite digest, no ads, nothing unsolicited, several sides, quiet by default, private by default, your language.</p>
- <p>Summaries and translations are machine-made and may contain mistakes. Every story links to its source. News belongs to its publishers.</p>
+ <p>Summaries and translations are machine-made and may contain mistakes. Every story links to its source. News belongs to its publishers. Research and deep articles also come from OpenAlex (openalex.org), an open index of scholarly work.</p>
  <h2 class="sec">Sources</h2>
  <div class="card" id="srcs"><p class="meta">Open this page to load the list.</p></div>
  <p class="meta">Know a good source? <a href="#feedback" id="sugglink">Suggest it</a>.</p>
@@ -333,6 +338,7 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
   <li>Your internet address is held only in the server’s memory for about a minute or two so it can limit rapid repeat requests and work out your country. It is never written to our records. Our own request log is switched off.</li>
   <li>Server error logs may briefly contain technical details, such as for failed connections. They are kept to a fixed size and old entries are deleted automatically.</li>
   <li><b>Translations and summaries</b> are made with an AI service (Anthropic). It receives the text of public news stories, never your keywords or anything about you. When you ask for a translation, your browser sends only the story numbers and the language.</li>
+  <li>Research papers come from OpenAlex, which our server contacts on a schedule for subjects we choose. Your device never contacts it, and your keywords are never sent to it.</li>
   <li>Our hosting providers (GitHub for this page, a server host for the news service) can keep their own technical logs under their own policies, as can your internet provider.</li>
   <li>When you open a source story or a YouTube video, that website’s own privacy policy applies.</li>
   <li><b>The Chrome add-on</b> reads the titles, channels and links of videos on the YouTube page you choose to send, passes them only to this page in your browser, and stores nothing itself.</li></ul></details>
@@ -357,21 +363,30 @@ details ol,details ul{margin:6px 0 6px 0;padding-left:22px}
 // ---- CONFIG ----------------------------------------------------------
 const API_BASE = 'https://api.feetontheroad.com.au';   // the news service
 const STORE = 'topicsdigester.v1';
-const APP_VERSION = '1.6';
+const APP_VERSION = '1.7';
 const APP_DATE = 'Oct 2026';      // shown on the About page and in feedback emails
 // ---------------------------------------------------------------------
 const SCOPES=['My Digest','All','Local (WA/AU)','US','Europe','Asia','Middle East','Iran','Global','English','Persian'];
-const FIELDS=['All','Economy','Politics','Geopolitics','History','Tech','Social','Comedy','Full movies','Random'];
-const TYPES=['Everything','Top stories','Popular','Breaking','Opinions','Research','Articles'];
+const FOCUS=[['news','News & politics'],['sport','Sport'],['ent','Entertainment'],['fun','Fun & comedy'],['money','Money'],['family','Family & kids'],['health','Health & wellbeing'],['sci','Science & tech'],['society','Society & culture']];
+const FORMATS=[['quick','Quick reads'],['deep','Deep reads'],['ideas','Ideas & solutions'],['research','Research']];
+const FLABEL=Object.fromEntries(FOCUS),MLABEL=Object.fromEntries(FORMATS);
 const SYN=[['housing','property','real estate'],['market','trends','prices','outlook'],['ai','artificial intelligence'],['regulation','rules','law'],['economy','economic'],['prices','costs']];
 const rx=w=>new RegExp('(?<!\\w)(?:'+w+')(?!\\w)','i');
-const FIELD_WORDS={Economy:'economy economic inflation rate rates market prices housing property jobs trade budget bank',Politics:'election parliament government minister senate congress vote policy law bill',Geopolitics:'war ceasefire sanctions nato china russia ukraine israel iran treaty border military',History:'history historic ancient anniversary heritage century archaeology',Tech:'ai software chip tech startup cyber data robot model quantum app',Social:'health housing education community family culture climate wellbeing crime'};
-const FIELD_RE={Comedy:rx('comedy|comedian|comedians|stand-?up|sitcom|funny|sketch|satire|late night|snl|kimmel|colbert|fallon|hilarious|کمدی|طنز|خنده|شوخی'),'Full movies':rx('full movie|full film|فیلم کامل|فیلم سینمایی')};
+const FRE={   // word rules for videos, and for stories when the server sent no tags
+ sport:rx('sport|football|soccer|afl|nrl|rugby|cricket|tennis|golf|olympic|olympics|premier league|nba|nfl|mlb|formula 1|f1|athlete|athletes|marathon|swimmer|swimming|cyclist|tour de france|world cup|grand final|wimbledon|medal|wicket|innings|a-league|socceroos|matildas|fifa|uefa|ufc|boxing|ورزش|فوتبال'),
+ ent:rx('movie|movies|film|films|cinema|box office|tv series|television|streaming|netflix|disney|actor|actress|singer|album|concert|festival|theatre|theater|musical|celebrity|oscars|emmy|grammy|bafta|exhibition|trailer|premiere|full movie|full film|فیلم|سینما|موسیقی'),
+ fun:rx('comedy|comedian|comedians|stand-?up|sitcom|satire|funny|hilarious|meme|memes|prank|parody|sketch|late night|snl|kimmel|colbert|fallon|کمدی|طنز|خنده|شوخی'),
+ money:rx('inflation|interest rate|interest rates|mortgage|housing|property|superannuation|retirement|invest|investing|investment|shares|stock market|asx|etf|crypto|bitcoin|budget|tax|cost of living|savings|loan|loans|bank|banks|wages|salary|pension|credit|debt|financial|finance|economy|economic|rba|gdp|prices|اقتصاد|تورم|دلار'),
+ family:rx('parent|parents|parenting|child|children|kids|toddler|baby|babies|teen|teens|teenager|school|schools|student|students|family|families|pregnant|pregnancy|childcare|early childhood|screen time|bullying|youth'),
+ health:rx('health|wellbeing|well-being|diet|nutrition|fitness|exercise|sleep|mental health|depression|anxiety|cancer|diabetes|heart|vaccine|hospital|doctor|medical|medicine|disease|covid|obesity|weight|therapy|clinic|wellness|mindfulness|سلامت|بهداشت'),
+ sci:rx('science|scientist|scientists|physics|astronomy|space|nasa|climate|quantum|ai|artificial intelligence|software|tech|technology|robot|robots|chip|chips|cyber|data|biology|genetic|genome|engineering'),
+ society:rx('society|social|culture|cultural|inequality|community|communities|migration|immigration|religion|identity|gender|racism|justice|history|historic|heritage|philosophy|ethics|democracy|institutions|systems'),
+ news:rx('election|parliament|government|minister|senate|congress|vote|policy|law|bill|war|ceasefire|sanctions|nato|treaty|military|president|prime minister|court|police|politics|political')};
+const F_OLD={Economy:'money',Politics:'news',Geopolitics:'news',History:'society',Tech:'sci',Social:'society'},T_FMT={'Top stories':'quick',Popular:'quick',Breaking:'quick',Opinions:'deep',Research:'research'};
 const PERSIAN_SCRIPT=/[\u0600-\u06ff]/;
 const PERSIAN_RX=/[\u0600-\u06ff]|(?<!\w)(?:persian|farsi|iranian)(?!\w)/i;
 const GEO={Iran:/(?<!\w)(iran|tehran|persia|shiraz|isfahan|ایران|تهران)/i,'Middle East':/(?<!\w)(iran|israel|gaza|palestin|lebanon|hezbollah|syria|iraq|saudi|yemen|houthi|qatar|emirates|uae|jordan|egypt|tehran|middle east|red sea|persia|ایران|تهران)/i};
 const VSCOPE={'Local (WA/AU)':rx('australia|australian|aussie|aussies|perth|sydney|melbourne|brisbane|adelaide|canberra|hobart|darwin|queensland|tasmania'),US:rx('usa|u\\.s\\.|american|americans|america|washington|trump|biden|congress|senate|white house|nfl|nba|mlb'),Europe:rx('europe|european|eu|uk|british|britain|england|london|germany|german|france|french|italy|italian|spain|spanish|brussels|nato'),Asia:rx('asia|asian|china|chinese|japan|japanese|india|indian|korea|korean|philippines|filipino|cebu|vietnam|thailand|singapore|indonesia')};
-const VTYPE={Breaking:rx('breaking|just in|developing|live updates?|live now'),Opinions:rx('opinion|commentary|analysis|debate|review|reaction|explained')};
 const EXAMPLES=['housing market','ai regulation','ایران','اقتصاد','طنز','فیلم کامل'];
 const DEMO=[
  {id:'d1',title:'Sample: Housing prices steady as rates hold',brief:'This is a sample story shown because the news service is not connected yet. Property prices were flat this quarter.',deep:'Sample deep text.',source:'Sample News A',region:'Local (WA/AU)',field:'Economy',type:'Top stories',keywords:['housing','rates'],published:Date.now()-36e5,url:'https://feetontheroad.com.au',also:[]},
@@ -381,7 +396,7 @@ const DEMO=[
 ];
 const DEF={kw:[],lang:'en',group:true,audio:false,li:true,hs:'m',ev:{},sc:{},vids:[],vlast:null,aud:{n:5,mode:'h',voice:''}};
 let S=load(), ALL=[], live=false, trans={}, showOrig=false, VALL=false;
-let F={scope:'All',field:'All',type:'Everything'};
+let F={scope:'All',focus:[],format:'All'};
 const $=id=>document.getElementById(id);
 const UPSVG='<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3 3.5 12H9v9h6v-9h5.5z" fill="currentColor"/></svg>';
 const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -408,18 +423,31 @@ document.addEventListener('keydown',e=>{const open=!$('menu').classList.contains
  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();const it=[...$('menu').querySelectorAll('button:not(.hide)')],i=it.indexOf(document.activeElement);it[(i+(e.key==='ArrowDown'?1:-1)+it.length)%it.length].focus()}});
 
 // ---- chips ----
-function renderChips(){const h=$('chips');h.innerHTML='';const sr=$('scoperow');sr.innerHTML='';
- const build=(opts,key,r)=>opts.forEach(o=>{const b=document.createElement('button');b.className='chip';b.textContent=o;b.setAttribute('aria-pressed',F[key]===o);b.onclick=()=>{F[key]=o;renderChips();render()};r.appendChild(b)});
- build(SCOPES,'scope',sr);const sel=sr.querySelector('[aria-pressed=true]');if(sel)sr.scrollLeft=Math.max(0,sel.offsetLeft-sr.clientWidth/2+sel.offsetWidth/2);
- [['Field',FIELDS,'field'],['Type',TYPES,'type']].forEach(([lab,opts,key])=>{const l=document.createElement('div');l.className='rowlab';l.textContent=lab;h.appendChild(l);
-  const r=document.createElement('div');r.className='row';r.setAttribute('role','group');r.setAttribute('aria-label',lab);build(opts,key,r);h.appendChild(r)})}
+function renderChips(){const fr=$('focusrow'),sr=$('scoperow'),h=$('chips'),kf=fr.scrollLeft;fr.innerHTML='';sr.innerHTML='';h.innerHTML='';
+ const chip=(label,pressed,on,data)=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=label;b.setAttribute('aria-pressed',pressed);Object.assign(b.dataset,data||{});b.onclick=on;return b};
+ const tag=t=>{const x=document.createElement('span');x.className='rowtag';x.textContent=t;x.setAttribute('aria-hidden','true');return x};
+ fr.appendChild(tag('Focus'));fr.appendChild(chip('All',!F.focus.length,()=>{F.focus=[];renderChips();render()},{k:'focus',v:'',label:'All'}));
+ FOCUS.forEach(([id,lab])=>fr.appendChild(chip(lab,F.focus.includes(id),()=>{const i=F.focus.indexOf(id);i>=0?F.focus.splice(i,1):F.focus.push(id);renderChips();render()},{k:'focus',v:id,label:lab})));
+ fr.scrollLeft=kf;
+ sr.appendChild(tag('Area'));SCOPES.forEach(o=>sr.appendChild(chip(o,F.scope===o,()=>{F.scope=o;renderChips();render()})));
+ const sel=sr.querySelector('[aria-pressed=true]');if(sel)sr.scrollLeft=Math.max(0,sel.offsetLeft-sr.clientWidth/2+sel.offsetWidth/2);
+ const l=document.createElement('div');l.className='rowlab';l.textContent='Format';h.appendChild(l);
+ const r=document.createElement('div');r.className='row';r.setAttribute('role','group');r.setAttribute('aria-label','Format');
+ r.appendChild(chip('All',F.format==='All',()=>{F.format='All';renderChips();render()},{k:'format',v:'',label:'All'}));
+ FORMATS.forEach(([id,lab])=>r.appendChild(chip(lab,F.format===id,()=>{F.format=id;renderChips();render()},{k:'format',v:id,label:lab})));h.appendChild(r)}
+// numbers on the Focus and Format chips: how many stories each would show given the other choices; empty ones fade
+function facetCounts(){const fc={},mc={};let nf=0,nm=0;FOCUS.forEach(([id])=>fc[id]=0);FORMATS.forEach(([id])=>mc[id]=0);
+ ALL.forEach(a=>{if(!scopeOK(a))return;if(formatOK(a)){nf++;focusOf(a).forEach(id=>{if(id in fc)fc[id]++})}if(focusOK(a)){nm++;const m=formatOf(a);if(m in mc)mc[m]++}});return{fc,mc,nf,nm}}
+function updCounts(){const {fc,mc,nf,nm}=facetCounts();document.querySelectorAll('.chip[data-k]').forEach(b=>{const k=b.dataset.k,v=b.dataset.v,n=k==='focus'?(v?fc[v]:nf):(v?mc[v]:nm);
+ b.textContent=b.dataset.label+' ('+n+')';b.classList.toggle('zero',n===0&&b.getAttribute('aria-pressed')!=='true')})}
+function activeDesc(){const p=[];if(F.scope!=='All')p.push(F.scope);if(F.focus.length)p.push(F.focus.map(id=>FLABEL[id]).join(' + '));if(F.format!=='All')p.push(MLABEL[F.format]);return p.join(' · ')}
 // Surprise me: tries combinations in random order and stops at the first one that has stories, so it never lands on an empty list
-$('surprise').onclick=()=>{const cur=F,sc=SCOPES.filter(x=>x!=='All'&&x!=='My Digest'),fl=FIELDS.filter(x=>x!=='All'),ty=TYPES.filter(x=>x!=='Everything'),all=[];
- sc.forEach(a=>fl.forEach(b=>ty.forEach(c=>all.push({scope:a,field:b,type:c}))));
+$('surprise').onclick=()=>{const cur=JSON.stringify(F),sc=SCOPES.filter(x=>x!=='All'&&x!=='My Digest'),fm=['All',...FORMATS.map(m=>m[0])],all=[];
+ sc.forEach(a=>FOCUS.forEach(([f])=>fm.forEach(m=>all.push({scope:a,focus:[f],format:m}))));
  for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]]}
- let pick=null,n=0;for(const c of all){F=c;n=filtered().length;if(n>0&&!(c.scope===cur.scope&&c.field===cur.field&&c.type===cur.type)){pick=c;break}}
- if(pick)status('ok','Surprise: '+pick.scope+' · '+pick.field+' · '+pick.type+' ('+n+' stories)');
- else{F={scope:'All',field:'All',type:'Everything'};status('err','Nothing to surprise you with yet: showing everything.')}
+ let pick=null,n=0;for(const c of all){F=c;n=filtered().length;if(n>0&&JSON.stringify(c)!==cur){pick=c;break}}
+ if(pick)status('ok','Surprise: '+pick.scope+' · '+FLABEL[pick.focus[0]]+' · '+(pick.format==='All'?'any format':MLABEL[pick.format])+' ('+n+' stories)');
+ else{F={scope:'All',focus:[],format:'All'};status('err','Nothing to surprise you with yet: showing everything.')}
  renderChips();render()};
 
 // ---- keyword matching (Persian-aware) ----
@@ -439,9 +467,11 @@ function scopeOK(a){const s=F.scope,b=blob(a);
  if(s==='Persian')return PERSIAN_RX.test(b);
  if(GEO[s]&&GEO[s].test(b))return true;
  return a.region===s}
-function fieldOK(a){const f=F.field;if(f==='All')return true;if(FIELD_RE[f])return FIELD_RE[f].test(blob(a));return a.field===f}
-function typeOK(a){const t=F.type;return t==='Everything'||(t==='Articles'?a.type!=='Opinions':a.type===t)}
-function filtered(){const l=ALL.filter(a=>scopeOK(a)&&fieldOK(a)&&typeOK(a));l.sort((a,b)=>b.published-a.published);return l}
+function focusOf(a){if(a._f)return a._f;let f;if(Array.isArray(a.focus)&&a.focus.length)f=a.focus;else{const t=blob(a);f=FOCUS.map(x=>x[0]).filter(id=>FRE[id].test(t));const o=F_OLD[a.field];if(o&&!f.includes(o))f.push(o);if(!f.length)f=['news']}a._f=f;return f}
+const formatOf=a=>a.format||T_FMT[a.type]||'quick';
+function focusOK(a){return !F.focus.length||focusOf(a).some(x=>F.focus.includes(x))}
+function formatOK(a){return F.format==='All'||formatOf(a)===F.format}
+function filtered(){const l=ALL.filter(a=>scopeOK(a)&&focusOK(a)&&formatOK(a));l.sort((a,b)=>b.published-a.published);return l}
 function roundRobin(l,n){const by={};l.forEach(a=>(by[a.source]=by[a.source]||[]).push(a));
  const q=Object.values(by),out=[];while(out.length<n&&q.some(x=>x.length))q.forEach(x=>{if(x.length&&out.length<n)out.push(x.shift())});
  return out.sort((a,b)=>b.published-a.published)}
@@ -454,7 +484,7 @@ const rtl=a=>S.lang==='fa'&&!showOrig&&trans['fa:'+a.id]?' fa" dir="rtl':'';
 function render(){const l=filtered(),hs=roundRobin(l,20);
  $('hlHead').textContent=`Headlines (${hs.length} of ${l.length} stories, sources mixed)`;
  const H=$('headlines'),B=$('briefs');H.innerHTML='';B.innerHTML='';
- if(!l.length){const m=`Nothing matches ${[F.scope,F.field,F.type].filter(x=>!['All','Everything'].includes(x)).join(' · ')||'these filters'}`;
+ if(!l.length){const m=`Nothing matches ${activeDesc()||'these filters'}`;
   H.innerHTML=`<div class="card"><p><b>${esc(m)}</b></p><button class="btn pri" id="reset">Reset filters</button> <span class="meta">or press Surprise me again.</span></div>`;
   $('reset').onclick=resetF}
  else{
@@ -465,13 +495,13 @@ function render(){const l=filtered(),hs=roundRobin(l,20);
   d.querySelector('.rt').onclick=e=>{const b=e.target.closest('button');if(!b)return;e.stopPropagation();rate(a.id,+b.dataset.v,d)};H.appendChild(d)});
  const tr=document.createElement('div');tr.className='toprow';tr.innerHTML='<button type="button" class="topbtn" aria-label="Back to top" title="Back to top">'+UPSVG+'</button>';tr.firstChild.onclick=toTop;H.appendChild(tr);
  const hid=new Set(hs.map(a=>a.id));[...hs,...l.filter(a=>!hid.has(a.id))].slice(0,60).forEach(a=>B.appendChild(card(a)))}   // briefs follow the headline order, so every headline has one
- updFsum();renderVids()}
-function resetF(){F={scope:'All',field:'All',type:'Everything'};renderChips();render()}
+ updCounts();updFsum();renderVids()}
+function resetF(){F={scope:'All',focus:[],format:'All'};renderChips();render()}
 
 function card(a){const c=document.createElement('article');c.className='card';c.id='c-'+a.id;
  const m=S.kw.length?kwMatch(blob(a)):null;
  c.innerHTML=`<h3 class="${rtl(a)}">${esc(tt(a,'title'))}</h3><p class="${rtl(a)}">${esc(tt(a,'brief'))}</p>
- <p class="meta">${[a.source,a.region,a.field,a.type].map(esc).join(' · ')}${S.lang!=='en'&&trans[S.lang+':'+a.id]?' · Machine translated':''}${m?` · matched “${esc(m)}”`:''}</p>
+ <p class="meta">${[a.source,a.region,...focusOf(a).slice(0,2).map(x=>FLABEL[x]),MLABEL[formatOf(a)]].map(esc).join(' · ')}${S.lang!=='en'&&trans[S.lang+':'+a.id]?' · Machine translated':''}${m?` · matched “${esc(m)}”`:''}</p>
  ${S.group&&a.also&&a.also.length?`<p class="meta">Also covered by: ${a.also.map(x=>`<a href="${esc(safeUrl(x.url))}" target="_blank" rel="noopener noreferrer">${esc(x.source)}</a>`).join(', ')}</p>`:''}
  <details><summary>Deep dive</summary><p class="${rtl(a)}">${esc(tt(a,'deep')||'No extra detail available.')}</p></details>
  <div class="cardft"><a href="${esc(safeUrl(a.url))}" target="_blank" rel="noopener noreferrer" class="rs">Read source ↗</a><button type="button" class="topbtn totopl" aria-label="Back to top" title="Back to top">${UPSVG}</button></div>`;
@@ -487,25 +517,21 @@ function rate(id,v,row){if(rv(id)===v)delete S.sc[id];else S.sc[id]=v;save();row
 function toTop(){const rm=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);window.scrollTo({top:0,behavior:rm?'auto':'smooth'});setTimeout(()=>{const h=$('top');if(h)h.focus({preventScroll:true})},rm?0:450)}
 
 // ---- YouTube videos (kept on this device; sent by the Chrome add-on) ----
-function classify(t){const w={};(t.toLowerCase().match(/[a-z]+/g)||[]).forEach(x=>w[x]=(w[x]||0)+1);
- let best='Random',bs=0;for(const f in FIELD_WORDS){const s=FIELD_WORDS[f].split(' ').reduce((a,x)=>a+(w[x]||0),0);if(s>bs){bs=s;best=f}}return best}
-function vidOK(v){const s=F.scope,f=F.field,ty=F.type,t=v.t+' '+v.c;
+function vidOK(v){const s=F.scope,t=v.t+' '+v.c;
  if(s==='My Digest'&&!kwMatch(t))return false;
  if(GEO[s]&&!GEO[s].test(t))return false;
  if(VSCOPE[s]&&!VSCOPE[s].test(t))return false;
  if(s==='Persian'&&!PERSIAN_RX.test(t))return false;
  if(s==='English'&&PERSIAN_SCRIPT.test(t))return false;
- if(FIELD_RE[f]){if(!FIELD_RE[f].test(t))return false}else if(f!=='All'&&classify(t)!==f)return false;
- if(ty==='Articles'||ty==='Research')return false;
- if(ty==='Popular'&&(v.views||0)<1e5)return false;
- if(VTYPE[ty]&&!VTYPE[ty].test(t))return false;
+ if(F.focus.length&&!F.focus.some(id=>FRE[id]&&FRE[id].test(t)))return false;
+ if(F.format!=='All')return false;
  return true}
 function renderVids(){const el=$('vp'),all=S.vids,vl=S.vlast?`<p class="meta">✅ Last received from the add-on: ${vfmt(S.vlast)}</p>`:'';
  const l=all.filter(vidOK).map(v=>({v,via:S.kw.length?kwMatch(v.t+' '+v.c):null})).sort((a,b)=>(!!b.via)-(!!a.via));
  $('vpc').textContent=all.length?`(${l.length} of ${all.length} saved match)`:'';
  if(!all.length){el.innerHTML='<p class="meta">No videos yet. Install the Chrome add-on (see <a href="#help" id="vhelp">Help</a>), open youtube.com, scroll a little and press Send. Videos from your own YouTube home page or searches then appear here, filtered by the choices above.</p>';
   $('vhelp').onclick=e=>{e.preventDefault();nav('Help')};return}
- if(!l.length){el.innerHTML=vl+`<p class="meta">No saved videos match <b>${esc([F.scope,F.field,F.type].filter(x=>!['All','Everything'].includes(x)).join(' · ')||'these filters')}</b>. Videos are matched on their title and channel. </p><button class="btn" id="vreset">Reset filters</button>`;$('vreset').onclick=resetF;return}
+ if(!l.length){el.innerHTML=vl+`<p class="meta">No saved videos match <b>${esc(activeDesc()||'these filters')}</b>. Videos are matched on their title and channel. </p><button class="btn" id="vreset">Reset filters</button>`;$('vreset').onclick=resetF;return}
  const shown=l.slice(0,VALL?30:8);
  el.innerHTML=vl+shown.map(({v,via})=>`<div class="vrow"><a dir="auto" href="https://www.youtube.com/watch?v=${esc(v.id)}" target="_blank" rel="noopener noreferrer">${esc(v.t)}</a><span class="meta" dir="auto">${esc(v.c)}</span>${via?`<span class="vb" title="matches your keyword">★ ${esc(via)}</span>`:''}</div>`).join('')+
   (l.length>8?`<p><button class="btn" id="vall">${VALL?'Show fewer':'Show more ('+Math.min(l.length,30)+')'}</button></p>`:'');
@@ -826,7 +852,7 @@ $('lang').onchange=e=>{S.lang=e.target.value;save();render();fillVoices();if(S.l
 // ---- compact filter bar ----
 function setFOpen(v){$('fbody').classList.toggle('hide',!v);$('ftoggle').textContent=v?'More filters ▴':'More filters ▾';$('ftoggle').setAttribute('aria-expanded',v)}
 $('ftoggle').onclick=()=>setFOpen($('fbody').classList.contains('hide'));
-function updFsum(){const p=[['Field',F.field,'All'],['Type',F.type,'Everything']].filter(x=>x[1]!==x[2]).map(x=>x[0]+' '+x[1]),e=$('fsum');e.textContent=p.join(' · ');e.classList.toggle('hide',!p.length)}
+function updFsum(){const e=$('fsum');e.textContent=F.format!=='All'?'Format '+MLABEL[F.format]:'';e.classList.toggle('hide',F.format==='All')}
 
 // ---- listen: reads the top headlines aloud with the device's own voice (no AI needed) ----
 const TTS='speechSynthesis' in window,VLANG={en:['en'],fa:['fa'],ceb:['ceb','fil','tl']},LCODE={en:'en-AU',fa:'fa-IR',ceb:'fil-PH'},LNAME={en:'English',fa:'Persian',ceb:'Visayan/Cebuano'};
