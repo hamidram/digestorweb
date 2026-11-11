@@ -1,5 +1,5 @@
 {
-  "version": "1.7",
+  "version": "1.8",
   "released": "Oct 2026",
-  "notes": "new Focus and Format filters with counts, deep articles and research from OpenAlex topics, area row always visible."
+  "notes": "Focus picks one at a time with an Excl. sport choice, easier-to-read headlines, a more compact filter block, and the page opens on My Digest."
 }
